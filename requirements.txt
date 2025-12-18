@@ -1,0 +1,33 @@
+# Core
+asyncio
+aiohttp>=3.8
+websockets>=11.0
+python-dotenv>=1.0
+toml>=0.10
+requests>=2.31
+numpy>=1.24
+scipy>=1.10
+pandas>=2.0
+
+# Database
+asyncpg>=0.28
+duckdb>=0.9
+
+# RAG (optional)
+chromadb>=0.4
+ollama
+
+# Telemetry
+prometheus-client>=0.17
+
+# Trading
+alpaca-trade-api>=3.0
+alpha_vantage>=2.3.1
+
+# Testing
+hypothesis>=6.0
+pytest>=9.0
+
+# Reporting
+matplotlib>=3.7
+

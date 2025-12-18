@@ -1,0 +1,318 @@
+# =============================================================================
+# OTQ Platform - Environment Configuration
+# =============================================================================
+# INSTRUCTIONS:
+# 1. Rename this file to .env
+# 2. Fill in your actual credentials
+# 3. Never commit .env to git!
+# 4. IMPORTANT: Keep .env as pure dotenv format (KEY=VALUE only).
+#    - Do NOT paste PowerShell lines like: $env:FOO="bar"  (put those in a .ps1 instead)
+#    - Avoid inline comments after values (e.g., KEY=value # comment) to prevent accidental value pollution.
+# =============================================================================
+
+# =============================================================================
+# JUPITER DEX ENGINE V1-LITE CONFIGURATION
+# =============================================================================
+
+# REQUIRED - Engine will exit if these are not set
+# -----------------------------------------------------------------------------
+
+# Solana private key in Base58 format (64 bytes when decoded)
+# ACCEPTS: Base58 string only
+# REJECTS: JSON arrays, hex strings, seed phrases
+SOLANA_PRIVATE_KEY=your_base58_private_key_here
+
+# Solana RPC endpoint URL
+# Recommended: Use a paid RPC for production (Helius, QuickNode, etc.)
+SOLANA_RPC_URL=https://api.mainnet-beta.solana.com
+
+# OPTIONAL - Enhanced Features
+# -----------------------------------------------------------------------------
+
+# Helius API key for better price feeds (primary source)
+# If not provided, Jupiter price API will be used exclusively
+HELIUS_API_KEY=
+
+# TRADING CONFIGURATION
+# -----------------------------------------------------------------------------
+
+# Trading pairs (comma-separated)
+# Format: BASE/QUOTE (e.g., SOL/USDC, JUP/USDC)
+JUP_PAIRS=SOL/USDC
+
+# Slippage tolerance in basis points (1 bps = 0.01%)
+# 75 bps = 0.75% slippage tolerance
+JUP_SLIPPAGE_BPS=75
+
+# Minimum SOL balance to maintain for transaction fees
+# Engine will pause if SOL balance falls below this
+MIN_SOL_RESERVE=0.05
+
+# Dry run mode - if true, simulates trades without executing
+# Set to false for live trading
+DRY_RUN=true
+
+# Maximum consecutive errors before pausing engine
+MAX_CONSECUTIVE_ERRORS=5
+
+# TIMING CONFIGURATION
+# -----------------------------------------------------------------------------
+
+# Tick interval in seconds (how often the engine checks for signals)
+TICK_INTERVAL=30
+
+# Price TTL in seconds (max age before price is considered stale)
+PRICE_TTL=10
+
+# Transaction confirmation timeout in seconds
+CONFIRM_TIMEOUT=60
+
+# HTTP request timeout in seconds
+HTTP_TIMEOUT=30
+
+# =============================================================================
+# OTHER PLATFORM CONFIGURATION
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# POLYGON.IO API (Optional unless running equities features)
+# -----------------------------------------------------------------------------
+# Get your API key from: https://polygon.io/dashboard/api-keys
+# 
+# Recommended Plan: $99/mo Alpaca Pro + Polygon SIP bundle
+# This gives you:
+#   - Unlimited real-time 1-min & 5-min bars
+#   - Full order book access
+#   - No rate limits on market data
+#
+POLYGON_API_KEY=
+
+# -----------------------------------------------------------------------------
+# ALPACA TRADING API (Optional unless running equities features)
+# -----------------------------------------------------------------------------
+# Get your API keys from: https://app.alpaca.markets/paper/dashboard/overview
+#
+# Paper Trading Keys (for testing):
+#   - Go to Paper Trading dashboard
+#   - Click "View" under API Keys
+#
+# Live Trading Keys (for real money):
+#   - Go to Live Trading dashboard
+#   - Complete identity verification first
+#   - Then generate API keys
+#
+ALPACA_API_KEY=
+ALPACA_SECRET_KEY=
+
+# Paper trading mode (true = paper, false = LIVE with REAL MONEY)
+# DANGER: Only set to false when you're ready to trade with real money!
+ALPACA_PAPER=true
+
+# -----------------------------------------------------------------------------
+# BYBIT API (Optional; legacy crypto venue)
+# -----------------------------------------------------------------------------
+# Get your API keys from: https://www.bybit.com/app/user/api-management
+#
+# For testnet (paper trading):
+#   - Go to https://testnet.bybit.com
+#   - Create a testnet account
+#   - Generate API keys in API Management
+#
+# For mainnet (real money):
+#   - Go to https://www.bybit.com/app/user/api-management
+#   - Create API key with "Contract" trading permissions
+#   - Whitelist your IP address for security
+#
+# NOTE: The crypto adapter can stream data WITHOUT API keys.
+# Keys are only required to EXECUTE trades.
+#
+BYBIT_API_KEY=
+BYBIT_SECRET_KEY=
+BYBIT_TESTNET=true
+
+# (Optional) Alternative naming used by some adapters:
+BYBIT_API_SECRET=
+
+# API signing window in ms (defaults to 5000)
+BYBIT_RECV_WINDOW_MS=5000
+
+# -----------------------------------------------------------------------------
+# PERPS EXECUTION (OTQ perps engine)
+# -----------------------------------------------------------------------------
+# Broker selection:
+# - sim: deterministic simulator (default)
+# - bybit: real Bybit perps broker (only used when TRADING_MODE=LIVE)
+PERPS_BROKER=sim
+
+# Trading mode gate for real execution.
+# Set to LIVE to allow wiring a real broker adapter.
+TRADING_MODE=PAPER
+
+# Hard safety latch: orders will be REFUSED unless explicitly armed.
+# Set ARM_TRADING=YES right before a live session.
+ARM_TRADING=NO
+
+# Risk caps enforced by the perps execution engine (OPEN intents only):
+PERPS_MAX_OPEN_POSITIONS=
+PERPS_MAX_TOTAL_NOTIONAL=
+PERPS_MAX_DAILY_LOSS_ABS=
+
+# -----------------------------------------------------------------------------
+# BINANCE.US API (Optional; spot venue)
+# -----------------------------------------------------------------------------
+# If you're in the US and can't access Bybit/global Binance:
+#   - Binance.US has spot trading (no perpetuals)
+#   - Same strategy works, just smaller edges (1.5-2.8% vs 3-5% daily)
+#   - Symbols: BTC/USD, ETH/USD, SOL/USD, DOGE/USD
+#
+# Get API keys from: https://www.binance.us/settings/api-management
+#
+BINANCE_US_API_KEY=
+BINANCE_US_SECRET_KEY=
+
+# Which crypto exchange to use? (bybit or binanceus)
+CRYPTO_EXCHANGE=bybit
+
+# Crypto MR sizing (USD notional per trade)
+# Binance.US spot commonly requires min notional around ~$12.
+# Set this to >= 12 (recommended: 15-25) to avoid minNotional/minQty edge cases.
+CRYPTO_NOTIONAL_PER_TRADE=15
+
+# If true, caps buys/sells to <= 1 base unit (e.g., <= 1 DOGE), which will
+# almost always FAIL Binance.US min-notional for low-priced coins.
+# For Binance.US spot, you typically want this OFF.
+CRYPTO_SINGLE_UNIT=false
+
+# Optional: refuse to size trades below this notional (prevents spammy rejected orders).
+CRYPTO_MIN_NOTIONAL_USD=12
+
+# -----------------------------------------------------------------------------
+# SOLANA + JUPITER (Spot)
+# -----------------------------------------------------------------------------
+# Solana RPC (required for swaps / wallet balance)
+# Example mainnet RPC: https://api.mainnet-beta.solana.com
+SOLANA_RPC_URL=
+
+# Keypair file path (recommended). If unset, the client may look for a repo-root:
+#   .solana_keypair.json
+SOLANA_KEYPAIR_PATH=
+
+# Jupiter API key may be required depending on the gateway / rate limits.
+JUPITER_API_KEY=
+
+# Strategy selection:
+# - mr: mean reversion RSI
+# - agg: aggressive MR
+# - scalp / pullback / trend: trend + pullback scalper
+# - movers: CoinGecko top movers
+JUP_STRATEGY=scalp
+
+# Price source for signal evaluation / candles:
+# - coingecko: use CoinGecko /simple/price for all pricing; Jupiter only for entry/exit quotes+swaps
+# - jupiter: use Jupiter quote-derived spot price (legacy)
+JUP_PRICE_SOURCE=coingecko
+
+# If JUP_PRICE_SOURCE=coingecko and CoinGecko misses a symbol:
+# - strict (default): skip signal update for that pair
+# - jupiter: fall back to a Jupiter quote-derived price for that pair only
+JUP_PRICE_FALLBACK=strict
+
+# When JUP_PRICE_FALLBACK=jupiter, cache the per-pair fallback price (seconds) to avoid quote storms.
+# Defaults to COINGECKO_PRICE_CACHE_TTL_SEC if set, else 10.
+JUP_FALLBACK_PRICE_CACHE_TTL_SEC=10
+
+# Rate-limit fallback logs per pair (seconds) so CoinGecko outages don't spam logs.
+JUP_FALLBACK_LOG_TTL_SEC=60
+
+# -----------------------------------------------------------------------------
+# COINGECKO (Market data for signals / candles)
+# -----------------------------------------------------------------------------
+# Use ONE of these keys (leave the other empty).
+COINGECKO_API_KEY=
+COINGECKO_PRO_API_KEY=
+
+# Optional: override base URL. Usually leave blank.
+# If you provide COINGECKO_PRO_API_KEY, the code will automatically use the pro host.
+COINGECKO_BASE_URL=
+
+# CoinGecko /simple/price vs_currency (default: usd)
+COINGECKO_VS_CURRENCY=usd
+
+# Cache TTL for CoinGecko prices in seconds (default: 5)
+COINGECKO_PRICE_CACHE_TTL_SEC=5
+
+# Optional overrides for symbol->CoinGecko id mapping (comma-separated).
+# Keep it simple: SYMBOL=id, no spaces.
+# Example: COINGECKO_ID_MAP=WIF=dogwifcoin,BONK=bonk,POPCAT=popcat
+COINGECKO_ID_MAP=
+
+# Quote endpoint (used for routing / swaps). Defaults are usually fine.
+JUPITER_QUOTE_URL=https://api.jup.ag/swap/v1/quote
+
+# Price endpoint (used for lightweight USD spot pricing).
+# Option A default is the Jupiter lite endpoint:
+#   https://lite-api.jup.ag/price/v2
+JUPITER_PRICE_URL=https://lite-api.jup.ag/price/v2
+
+# -----------------------------------------------------------------------------
+# JUPITER STRATEGY TUNING (engine reads these for mr/agg/scalp)
+# -----------------------------------------------------------------------------
+JUP_RISK_PCT=0.75
+JUP_NOTIONAL=15
+JUP_MAX_HOLD_MIN=20
+JUP_MAX_POSITIONS=5
+JUP_SINGLE_UNIT=false
+
+# Aggressive/MR knobs
+JUP_RSI_OVERSOLD=40
+JUP_MOMENTUM_LB=5
+
+# Scalper knobs (trend + pullback)
+JUP_SCALP_TP_PCT=8
+JUP_SCALP_SL_PCT=6
+JUP_SCALP_TRAIL_START_PCT=8
+JUP_SCALP_TRAIL_PCT=4
+JUP_SCALP_TREND_LB=40
+JUP_SCALP_TREND_MIN_PCT=1
+JUP_SCALP_HIGH_LB=20
+JUP_SCALP_PULLBACK_PCT=1
+JUP_SCALP_RSI_PERIOD=7
+JUP_SCALP_RSI_MAX=48
+JUP_SCALP_COOLDOWN_MIN=5
+JUP_SLIPPAGE_BPS=150
+
+# =============================================================================
+# Quick Start Guide
+# =============================================================================
+#
+# 1. Rename this file: ren env_example.txt .env
+#
+# NOTE: Keep .env as dotenv-only KEY=VALUE lines. If you're using PowerShell,
+# do not paste $env:... lines into .env (put those in a launcher script).
+#
+# 2. (Optional) Get Polygon API key (equities features only):
+#    - Sign up at polygon.io
+#    - Subscribe to a plan (free tier works for testing)
+#    - Copy API key from dashboard
+#
+# 3. (Optional) Get Alpaca API keys (equities features only):
+#    - Sign up at alpaca.markets
+#    - Go to Paper Trading dashboard
+#    - Generate API keys
+#    - Copy both API key and Secret key
+#
+# 4. Test your setup:
+#    otq hello
+#    otq status
+#    otq fetch --symbol SPY
+#
+# 5. Run paper trading:
+#    otq paper
+#
+# 6. When ready for live (after extensive paper testing):
+#    - Generate LIVE API keys from Alpaca
+#    - Set ALPACA_PAPER=false
+#    - Run: otq live
+#
+# =============================================================================
+

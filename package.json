@@ -1,0 +1,38 @@
+{
+  "name": "dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "biome check",
+    "format": "biome format --write",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tanstack/react-table": "^8.21.3",
+    "chart.js": "^4.5.1",
+    "classnames": "^2.5.1",
+    "next": "16.0.8",
+    "react": "19.2.1",
+    "react-chartjs-2": "^5.3.1",
+    "react-dom": "19.2.1",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.2.0",
+    "@netlify/functions": "^5.1.1",
+    "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/testing-library__jest-dom": "^6.0.0",
+    "babel-plugin-react-compiler": "1.0.0",
+    "jsdom": "^26.0.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

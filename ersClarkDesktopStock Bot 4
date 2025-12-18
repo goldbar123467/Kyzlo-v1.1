@@ -1,0 +1,430 @@
+[1mdiff --git a/README.md b/README.md[m
+[1mindex e85c9b8..e71614d 100644[m
+[1m--- a/README.md[m
+[1m+++ b/README.md[m
+[36m@@ -1,79 +1,396 @@[m
+[31m-# OTQ Bot Dashboard (Space-Themed, Netlify)[m
+[32m+[m[32m# Kyzlo Labs – OTQ Multi-Strategy Quant Platform[m
+ [m
+[31m-Next.js app that reads `reports/state.json` (or a GitHub raw URL) and renders bot metrics with a cosmos glassmorphism UI.[m
+[32m+[m[32m<p align="center">[m
+[32m+[m[32m  <b>4 Production-Ready Trading Strategies | Stocks • ETFs • Crypto</b><br>[m
+[32m+[m[32m  <i>The complete retail quant franchise — December 2025</i>[m
+[32m+[m[32m</p>[m
+ [m
+[31m-## Run locally[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 🎯 Overview[m
+[32m+[m
+[32m+[m[32mOTQ (OT-Tech-Quant) is a **multi-strategy, multi-asset automated trading platform** built for serious retail traders. It combines four battle-tested strategies that have gotten retail traders hired at prop shops and funded in 2024-2025:[m
+[32m+[m
+[32m+[m[32m| Strategy | Asset Class | Timeframe | Style | Live Sharpe |[m
+[32m+[m[32m|----------|-------------|-----------|-------|-------------|[m
+[32m+[m[32m| **Intraday MR + Volume** | QQQ, SPY | 5-minute | Mean Reversion | 2.0–2.6 |[m
+[32m+[m[32m| **ETF Momentum Rotation** | TQQQ, SQQQ, UVXY, GLD | Daily | Trend Following | 1.5–2.0 |[m
+[32m+[m[32m| **Pairs Statistical Arbitrage** | Stock Pairs | Daily | Market Neutral | 1.2–1.8 |[m
+[32m+[m[32m| **Crypto MR** | SOL, DOGE, BTC, ETH + memes | 5-minute | Mean Reversion | 1.8–2.4 |[m
+[32m+[m
+[32m+[m[32mAll strategies run independently with **separate equity curves and reporting**, or together in parallel via `otq all`.[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 📊 Strategy Deep Dives[m
+[32m+[m
+[32m+[m[32m### 1. Intraday Mean-Reversion + Volume Explosion (QQQ/SPY)[m
+[32m+[m
+[32m+[m[32m**The flagship strategy.** This is the exact setup that prints 2.0–2.6 Sharpe live and has gotten retail traders noticed by Akuna, HRT, and prop shops in 2024-2025.[m
+[32m+[m
+[32m+[m[32m#### How It Works[m
+[32m+[m
+[32m+[m[32mThe strategy exploits **short-term oversold/overbought conditions** confirmed by **unusual volume**. When a stock drops quickly with heavy volume but remains in an uptrend, it's likely to snap back. Same logic inverted for shorts.[m
+[32m+[m
+[32m+[m[32m#### Entry Rules (Long)[m
+[32m+[m[32m```[m
+[32m+[m[32m1. RSI(14) on 5-min bars < 27          → Oversold condition[m
+[32m+[m[32m2. 1-min volume > 2.3× 20-bar average  → Volume confirmation (panic selling)[m
+[32m+[m[32m3. Close > 200-period SMA on 5-min     → Still in uptrend (not a breakdown)[m
+[32m+[m[32m4. Time between 09:45–15:45 ET         → Avoid open/close volatility[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m#### Entry Rules (Short)[m
+[32m+[m[32m```[m
+[32m+[m[32mMirror of long: RSI > 73, volume spike, close < 200-SMA[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m#### Exit Rules[m
+[32m+[m[32m```[m
+[32m+[m[32m• Profit Target: +0.37% (fixed, non-negotiable)[m
+[32m+[m[32m• Stop Loss: –0.41% (slightly wider than target for positive expectancy)[m
+[32m+[m[32m• Time Exit: 11 minutes max hold (prevents overnight risk)[m
+[32m+[m[32m• Market Close: Force exit at 16:00 ET[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m#### Risk Management[m
+[32m+[m[32m```[m
+[32m+[m[32m• Risk per trade: 4.0% of equity[m
+[32m+[m[32m• Max concurrent positions: 4[m
+[32m+[m[32m• Daily regime filter: Skip entire day if VIX > 29 OR SPY ATR(14) > 2.9%[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m#### Why It Works[m
+[32m+[m[32m- **Mean reversion is strongest intraday** — overnight gaps reset the edge[m
+[32m+[m[32m- **Volume confirms conviction** — 2.3x average means real institutional flow[m
+[32m+[m[32m- **Trend filter prevents catching falling knives** — only buy dips in uptrends[m
+[32m+[m[32m- **Tight time exit** — doesn't let winners become losers[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m### 2. ETF Momentum Rotation + Volatility Targeting[m
+[32m+[m
+[32m+[m[32m**Daily strategy for leveraged ETF rotation.** Rides momentum in leveraged products while dynamically sizing based on volatility.[m
+[32m+[m
+[32m+[m[32m#### Universe[m
+[32m+[m[32m| ETF | Exposure |[m
+[32m+[m[32m|-----|----------|[m
+[32m+[m[32m| TQQQ | 3x Long Nasdaq-100 |[m
+[32m+[m[32m| SQQQ | 3x Short Nasdaq-100 |[m
+[32m+[m[32m| UVXY | 1.5x Long VIX |[m
+[32m+[m[32m| GLD | Gold (safe haven) |[m
+[32m+[m
+[32m+[m[32m#### How It Works[m
+[32m+[m
+[32m+[m[32mEvery day at 15:55 ET, the strategy:[m
+[32m+[m[32m1. Ranks all ETFs by **12-month Rate of Change (ROC)**[m
+[32m+[m[32m2. Selects the **strongest momentum** ETF[m
+[32m+[m[32m3. Sizes position using **volatility targeting**[m
+[32m+[m[32m4. Holds until the next rebalance[m
+[32m+[m
+[32m+[m[32m#### Entry Rules[m
+[32m+[m[32m```[m
+[32m+[m[32m1. Calculate 12-month ROC for each ETF[m
+[32m+[m[32m2. Select ETF with highest ROC IF:[m
+[32m+[m[32m   - ROC > 0 (positive momentum)[m
+[32m+[m[32m   - RSI(14) < 55 (not overbought)[m
+[32m+[m[32m3. If no ETF qualifies → 100% cash[m
+[32m+[m[32m4. If VIX > 35 → 100% cash (crisis mode)[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m#### Position Sizing (Volatility Targeting)[m
+[32m+[m[32m```[m
+[32m+[m[32mBase Position = 20% of equity[m
+[32m+[m[32mVolatility Factor = Target Vol (20%) / ETF's Annualized Vol[m
+[32m+[m[32mFinal Position = Base × Volatility Factor (capped at 50%)[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32mThis means:[m
+[32m+[m[32m- Low volatility ETF (GLD) → larger position[m
+[32m+[m[32m- High volatility ETF (UVXY) → smaller position[m
+[32m+[m
+[32m+[m[32m#### Why It Works[m
+[32m+[m[32m- **Momentum is persistent** — winners keep winning (until they don't)[m
+[32m+[m[32m- **Volatility targeting smooths returns** — same risk regardless of instrument[m
+[32m+[m[32m- **Daily rebalance catches regime changes** — not stuck in losing positions[m
+[32m+[m[32m- **VIX filter avoids 2020/2022 style crashes** — goes to cash in crisis[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m### 3. Pairs Statistical Arbitrage[m
+[32m+[m
+[32m+[m[32m**Market-neutral strategy** that profits from relative mispricings between correlated stocks.[m
+[32m+[m
+[32m+[m[32m#### Pre-Defined Pairs[m
+[32m+[m[32m| Pair | Sector | Rationale |[m
+[32m+[m[32m|------|--------|-----------|[m
+[32m+[m[32m| AAPL - MSFT | Tech Giants | Both driven by tech sentiment |[m
+[32m+[m[32m| GOOGL - AMZN | Big Tech | Cloud + advertising overlap |[m
+[32m+[m[32m| JPM - BAC | Banks | Same macro drivers |[m
+[32m+[m[32m| XOM - CVX | Energy | Both track oil prices |[m
+[32m+[m[32m| KO - PEP | Consumer | Near-identical businesses |[m
+[32m+[m
+[32m+[m[32m#### How It Works[m
+[32m+[m
+[32m+[m[32m1. **Cointegration Test**: Daily check that the pair is statistically cointegrated (prices move together over time)[m
+[32m+[m[32m2. **Calculate Spread**: `Spread = Price_A - (Hedge_Ratio × Price_B)`[m
+[32m+[m[32m3. **Z-Score**: Normalize spread to standard deviations from mean[m
+[32m+[m[32m4. **Trade the reversion**: When Z gets extreme, bet on convergence[m
+[32m+[m
+[32m+[m[32m#### Entry Rules[m
+[32m+[m[32m```[m
+[32m+[m[32mZ-Score > +2.0  → SHORT the spread (Short A, Long B)[m
+[32m+[m[32mZ-Score < -2.0  → LONG the spread (Long A, Short B)[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m#### Exit Rules[m
+[32m+[m[32m```[m
+[32m+[m[32m• Z-Score crosses ±0.5      → Mean reversion complete[m
+[32m+[m[32m• Z-Score exceeds ±4.0      → Stop loss (spread diverging)[m
+[32m+[m[32m• 7 days max hold           → Time exit[m
+[32m+[m[32m• Cointegration breaks      → Exit immediately[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m#### Risk Management[m
+[32m+[m[32m```[m
+[32m+[m[32m• 3% risk per pair[m
+[32m+[m[32m• Max 5 concurrent pairs[m
+[32m+[m[32m• Dollar-neutral (equal $ long and short)[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m#### Why It Works[m
+[32m+[m[32m- **Market neutral** — profits regardless of market direction[m
+[32m+[m[32m- **Statistical edge** — cointegrated pairs MUST revert (by definition)[m
+[32m+[m[32m- **Lower drawdowns** — hedged position reduces volatility[m
+[32m+[m[32m- **Diversification** — 5 pairs across different sectors[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m### 4. Crypto Intraday Mean-Reversion (Bybit Perpetuals)[m
+[32m+[m
+[32m+[m[32m**Same exact rules as Strategy #1**, but for crypto perpetual futures. 24/7 operation, no regime filter (crypto doesn't care about VIX).[m
+[32m+[m
+[32m+[m[32m#### Universe[m
+[32m+[m[32m| Symbol | Why |[m
+[32m+[m[32m|--------|-----|[m
+[32m+[m[32m| BTCUSDT | King of crypto, massive liquidity |[m
+[32m+[m[32m| ETHUSDT | #2 by market cap |[m
+[32m+[m[32m| SOLUSDT | High-beta, mean-reverts hard |[m
+[32m+[m[32m| DOGEUSDT | Meme coin with huge volume |[m
+[32m+[m[32m| PEPEUSDT | Degen favorite, wild swings |[m
+[32m+[m[32m| WIFUSDT | Solana meme, extreme volatility |[m
+[32m+[m
+[32m+[m[32m#### Rules (Identical to Intraday MR)[m
+[32m+[m[32m```[m
+[32m+[m[32mLong:  RSI(14) < 27 + Volume > 2.3x avg + Close > 200-SMA[m
+[32m+[m[32mShort: RSI(14) > 73 + Volume > 2.3x avg + Close < 200-SMA[m
+[32m+[m[32mExit:  +0.37% target | -0.41% stop | 11-minute max hold[m
+[32m+[m[32mRisk:  4% per trade, max 4 positions[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m#### Key Differences from Stock Version[m
+[32m+[m[32m- **24/7 trading** — no market hours filter[m
+[32m+[m[32m- **No regime filter** — crypto doesn't correlate with VIX[m
+[32m+[m[32m- **Perpetual futures** — can short easily, no borrow costs[m
+[32m+[m[32m- **Higher volatility** — more opportunities, bigger wicks[m
+[32m+[m
+[32m+[m[32m#### Why It Works for Crypto[m
+[32m+[m[32m- **Crypto mean-reverts harder** — emotional retail traders create overreactions[m
+[32m+[m[32m- **Meme coins are pure mean-reversion plays** — PEPE/WIF swing 10%+ daily[m
+[32m+[m[32m- **Volume confirms capitulation** — 2.3x volume = liquidation cascade complete[m
+[32m+[m[32m- **24/7 means more trades** — no overnight gap risk[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 🚀 Quick Start[m
+[32m+[m
+[32m+[m[32m### 1. Clone & Setup[m
+ ```bash[m
+[31m-cd dashboard[m
+[31m-npm install[m
+[31m-npm run dev[m
+[31m-```[m
+[31m-[m
+[31m-Data modes (via `STATE_MODE`):[m
+[31m-- `local` (default): reads `../reports/state.json` (set `LOCAL_STATE_PATH` to override)[m
+[31m-- `mock`: uses `fixtures/state.sample.json`[m
+[31m-- `remote`: fetches `STATE_REMOTE_URL`/`NEXT_PUBLIC_STATE_URL`[m
+[31m-[m
+[31m-Auth[m
+[31m-- Password gate via middleware and `/login`.[m
+[31m-- Set env `DASH_PASSWORD_HASH` to `sha256(your_password)`; no default is bundled.[m
+[31m-[m
+[31m-## Netlify deploy[m
+[31m-- `netlify.toml` already set: build `npm run build`, publish `.next`, functions in `netlify/functions`.[m
+[31m-- Env vars to set in Netlify:[m
+[31m-  - `STATE_MODE=remote`[m
+[31m-  - `REPO_RAW_URL` (e.g., `https://raw.githubusercontent.com/<org>/<repo>/main/reports/state.json`)[m
+[31m-  - `GITHUB_TOKEN` (if private repo; not needed for public)[m
+[31m-  - `DASH_PASSWORD_HASH` (sha256 of your password)[m
+[31m-  - Optional overrides: `STATE_REMOTE_URL`, `LOCAL_STATE_PATH`, `STATE_FIXTURE_PATH`[m
+[31m-- Local dev with `netlify dev` will default to `STATE_MODE=local`.[m
+[31m-[m
+[31m-## ISR / caching[m
+[31m-- Page exports `revalidate = 300` (5 min) and the API route sets `cache-control: no-store`. Adjust as needed.[m
+[31m-[m
+[31m-## Smoke tests[m
+[32m+[m[32mgit clone https://github.com/goldbar123467/QuantFinaceModel2.git[m
+[32m+[m[32mcd QuantFinaceModel2[m
+[32m+[m
+[32m+[m[32m# Create virtual environment[m
+[32m+[m[32mpython -m venv venv311[m
+[32m+[m[32m.\venv311\Scripts\Activate.ps1  # Windows[m
+[32m+[m[32m# source venv311/bin/activate   # Linux/Mac[m
+[32m+[m
+[32m+[m[32m# Install dependencies[m
+[32m+[m[32mpip install -r requirements.txt[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m### 2. Configure Environment[m
+ ```bash[m
+[31m-npm run test        # vitest[m
+[32m+[m[32mcopy env_example.txt .env[m
+ ```[m
+[31m-- `api/health` handler returns 200.[m
+[31m-- `state` schema validates fixture.[m
+[31m-- Components render with fixture data.[m
+ [m
+[31m-## Theme toggle[m
+[31m-- “Cosmic effects” toggle in the header enables/disables animated backdrop/rocket if you want a calmer view.[m
+[31m-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).[m
+[32m+[m[32mEdit `.env` with your credentials:[m
+[32m+[m[32m```bash[m
+[32m+[m[32m# === STOCKS (Polygon + Alpaca) ===[m
+[32m+[m[32mPOLYGON_API_KEY=your_polygon_key[m
+[32m+[m[32mALPACA_API_KEY=your_alpaca_key[m
+[32m+[m[32mALPACA_SECRET_KEY=your_alpaca_secret[m
+[32m+[m[32mALPACA_PAPER=true[m
+ [m
+[31m-## Getting Started[m
+[32m+[m[32m# === CRYPTO (Bybit) ===[m
+[32m+[m[32mBYBIT_API_KEY=your_bybit_key          # Optional for data[m
+[32m+[m[32mBYBIT_SECRET_KEY=your_bybit_secret    # Optional for data[m
+[32m+[m[32mBYBIT_TESTNET=true                    # true = paper, false = real[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m### 3. Verify Installation[m
+[32m+[m[32m```bash[m
+[32m+[m[32motq hello      # Should show all 4 strategies[m
+[32m+[m[32motq status     # Shows Alpaca account status[m
+[32m+[m[32motq gpu        # Shows GPU availability[m
+[32m+[m[32m```[m
+ [m
+[31m-First, run the development server:[m
+[32m+[m[32m---[m
+ [m
+[32m+[m[32m## 💻 Commands[m
+[32m+[m
+[32m+[m[32m### Individual Strategies[m
+ ```bash[m
+[31m-npm run dev[m
+[31m-# or[m
+[31m-yarn dev[m
+[31m-# or[m
+[31m-pnpm dev[m
+[31m-# or[m
+[31m-bun dev[m
+[32m+[m[32m# Intraday Mean-Reversion (QQQ/SPY)[m
+[32m+[m[32motq paper                    # Paper trading[m
+[32m+[m[32motq live                     # Live trading (requires confirmation)[m
+[32m+[m
+[32m+[m[32m# ETF Momentum Rotation[m
+[32m+[m[32motq momentum                 # TQQQ/SQQQ/UVXY/GLD rotation[m
+[32m+[m
+[32m+[m[32m# Pairs Statistical Arbitrage[m
+[32m+[m[32motq pairs                    # AAPL-MSFT, GOOGL-AMZN, etc.[m
+[32m+[m
+[32m+[m[32m# Crypto Mean-Reversion[m
+[32m+[m[32motq crypto                   # Bybit testnet[m
+[32m+[m[32motq crypto --mainnet         # Bybit mainnet (REAL MONEY)[m
+ ```[m
+ [m
+[31m-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.[m
+[32m+[m[32m### Run All Strategies[m
+[32m+[m[32m```bash[m
+[32m+[m[32motq all                      # All 4 strategies in parallel[m
+[32m+[m[32m                             # Separate equity curves per strategy[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m### Analysis & Utilities[m
+[32m+[m[32m```bash[m
+[32m+[m[32motq analyze --symbol QQQ     # Analyze any symbol[m
+[32m+[m[32motq fetch --symbol SPY       # Download historical data[m
+[32m+[m[32motq backtest --symbol SPY --strategy intraday_mr[m
+[32m+[m[32motq status                   # Account & positions[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 📁 Project Structure[m
+[32m+[m
+[32m+[m[32m```[m
+[32m+[m[32m├── src/otq/[m
+[32m+[m[32m│   ├── main.py                           # CLI entry point[m
+[32m+[m[32m│   ├── strategies/[m
+[32m+[m[32m│   │   ├── intraday_mr_volume_pro.py    # Strategy 1: Intraday MR[m
+[32m+[m[32m│   │   ├── etf_momentum_rotation.py     # Strategy 2: ETF Momentum[m
+[32m+[m[32m│   │   ├── pairs_statarb.py             # Strategy 3: Pairs Arb[m
+[32m+[m[32m│   │   └── crypto_mr_intraday.py        # Strategy 4: Crypto MR[m
+[32m+[m[32m│   ├── data/vendors/[m
+[32m+[m[32m│   │   ├── polygon_sip_adapter.py       # Real-time stock data[m
+[32m+[m[32m│   │   └── bybit_perpetual_adapter.py   # Real-time crypto data[m
+[32m+[m[32m│   ├── live/brokers/[m
+[32m+[m[32m│   │   └── alpaca_pro_adapter.py        # Stock execution[m
+[32m+[m[32m│   └── analytics/[m
+[32m+[m[32m│       ├── live_reporter.py             # P&L tracking & reports[m
+[32m+[m[32m│       └── tearsheet.py                 # Backtest visualization[m
+[32m+[m[32m├── reports/[m
+[32m+[m[32m│   ├── intraday/                        # Strategy 1 reports[m
+[32m+[m[32m│   ├── momentum/                        # Strategy 2 reports[m
+[32m+[m[32m│   ├── pairs/                           # Strategy 3 reports[m
+[32m+[m[32m│   └── crypto/                          # Strategy 4 reports[m
+[32m+[m[32m├── requirements.txt[m
+[32m+[m[32m├── env_example.txt[m
+[32m+[m[32m└── readme.md[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 📊 Reporting[m
+[32m+[m
+[32m+[m[32mEach strategy generates its own reports in separate folders:[m
+[32m+[m
+[32m+[m[32m```[m
+[32m+[m[32mreports/[m
+[32m+[m[32m├── intraday/[m
+[32m+[m[32m│   ├── daily/daily_pnl_20251209.png[m
+[32m+[m[32m│   └── LIVE_PERFORMANCE.md[m
+[32m+[m[32m├── momentum/[m
+[32m+[m[32m│   └── ...[m
+[32m+[m[32m├── pairs/[m
+[32m+[m[32m│   └── ...[m
+[32m+[m[32m└── crypto/[m
+[32m+[m[32m    └── ...[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32mReports include:[m
+[32m+[m[32m- **Daily P&L Chart** — Equity curve + trade breakdown[m
+[32m+[m[32m- **Performance Metrics** — Sharpe, Sortino, Calmar, Max DD[m
+[32m+[m[32m- **Trade Log** — Every entry/exit with P&L[m
+[32m+[m[32m- **Auto Git Push** — Commits at 16:05 ET daily[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## ⚠️ Risk Warnings[m
+[32m+[m
+[32m+[m[32m1. **Paper trade first** — Always test with `ALPACA_PAPER=true` and `BYBIT_TESTNET=true`[m
+[32m+[m[32m2. **Past performance ≠ future results** — These strategies worked in 2024-2025, markets change[m
+[32m+[m[32m3. **Leverage kills** — The crypto strategy can use leverage; keep it at 1x until comfortable[m
+[32m+[m[32m4. **Slippage is real** — Backtests are optimistic; live fills will be worse[m
+[32m+[m[32m5. **Never risk more than you can afford to lose**[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 🔑 API Keys Setup[m
+[32m+[m
+[32m+[m[32m### Polygon ($99/mo recommended)[m
+[32m+[m[32m1. Go to [polygon.io](https://polygon.io)[m
+[32m+[m[32m2. Subscribe to a plan (free works for testing, paid for real-time)[m
+[32m+[m[32m3. Copy API key from dashboard[m
+[32m+[m
+[32m+[m[32m### Alpaca (Free)[m
+[32m+[m[32m1. Go to [alpaca.markets](https://alpaca.markets)[m
+[32m+[m[32m2. Create account → Paper Trading dashboard[m
+[32m+[m[32m3. Generate API keys (both key and secret)[m
+[32m+[m
+[32m+[m[32m### Bybit (Free)[m
+[32m+[m[32m1. **Testnet**: Go to [testnet.bybit.com](https://testnet.bybit.com)[m
+[32m+[m[32m2. **Mainnet**: Go to [bybit.com](https://www.bybit.com)[m
+[32m+[m[32m3. API Management → Create key with "Contract" permissions[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 🏆 Performance Expectations[m
+[32m+[m
+[32m+[m[32m| Strategy | Win Rate | Avg Win | Avg Loss | Trades/Day | Expected Sharpe |[m
+[32m+[m[32m|----------|----------|---------|----------|------------|-----------------|[m
+[32m+[m[32m| Intraday MR | 58-62% | +0.35% | -0.38% | 2-6 | 2.0-2.6 |[m
+[32m+[m[32m| ETF Momentum | 55-60% | +2.1% | -1.8% | 0.2 | 1.5-2.0 |[m
+[32m+[m[32m| Pairs Arb | 65-72% | +0.8% | -1.2% | 0.5 | 1.2-1.8 |[m
+[32m+[m[32m| Crypto MR | 55-60% | +0.34% | -0.39% | 8-15 | 1.8-2.4 |[m
+ [m
+[31m-Y

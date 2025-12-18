@@ -1,0 +1,47 @@
+[scheduler]
+# BAR mode is what you want for RSI-based mean reversion.
+mode = "BAR"
+bar_interval_seconds = 10
+
+# Only used if your app also supports a non-BAR loop; keep it present but not aggressive.
+interval_seconds = 5
+
+[feature_flags]
+enable_jupiter = true
+enable_binance = false
+enable_new_regime_logic = false
+enable_experimental_account = false
+max_venues_per_symbol = 1
+allow_multi_venue = false
+[risk]
+max_position_size = 25
+min_trade_notional = 3
+max_leverage = 1.0
+max_daily_loss = 25
+max_notional_per_order = 15
+fat_finger_multiplier = 2.0
+max_slippage_bps = 100
+max_hold_minutes = 11
+min_rsi_for_entry = 30
+
+[telemetry]
+prometheus_port = 8002
+log_level = "DEBUG"
+[jupiter]
+rpc_url = "https://api.mainnet-beta.solana.com"
+priority_fee_lamports = 5000
+swap_mode = "ExactIn"
+instruments = ["SOL", "JUP", "TRUMP"]
+initial_capital = 100
+
+# Conservative priority fee; adjust if needed
+priority_fee_lamports = 5000
+
+# ExactIn = spend exact USDC amount; safer for sizing
+swap_mode = "ExactIn"
+
+# Universe (expand/trim as needed)
+instruments = ["SOL", "JUP", "TRUMP"]
+
+# Optional / informational (depends on your loader)
+initial_capital = 100

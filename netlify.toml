@@ -1,0 +1,13 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+  functions = "netlify/functions"
+
+[dev]
+  framework = "next"
+  targetPort = 3000
+
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["reports/state.json", "fixtures/state.sample.json"]
+

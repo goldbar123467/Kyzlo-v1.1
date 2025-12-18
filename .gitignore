@@ -1,0 +1,140 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+############################
+# Python / Quant Engine
+############################
+
+# Virtual environments
+venv/
+venv*/
+.env/
+.env.*
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+
+# Hypothesis
+.hypothesis/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Runtime logs & state
+logs/
+reports/state.json
+reports/jupiter/
+reports/research/
+data/
+
+# Secrets / keys (CRITICAL)
+.solana_keypair.json
+*.key
+*.json.key
+*.pem
+
+# Node
+node_modules/
+dashboard/node_modules/
+
+# Next.js build output
+dashboard/.next/
+dashboard/out/
+
+# Stray scripts
+*- Copy.ps1
+
+# Custom additions
+reports/
+__pycache__/
+*.pyc
+.env
+.venv/
+venv*/
+
+# wallet keys
+jupiter_alt.json
+
+# API keys and sensitive files
+binance api.txt
+*.key
+*.pem
+config/secrets.py
+infrastructure/config/secrets.py
+
+# Test files
+.env.test
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+Get-ChildItem
+
+# Temporary/build files
+latest_backtest.png
+*.log
+*.tmp
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Personal/local files
+ersClarkDesktopStock Bot 4
+
+# State files with sensitive data
+reports/*/state.json
+fixtures/state.sample.json
+
+# Package manager locks (optional - uncomment if you want to ignore)
+# package-lock.json
