@@ -1,38 +1,62 @@
-# Kyzlo v1.1
+<p align="center">
+  <img src="https://img.shields.io/badge/KYZLO-v1.1-blueviolet?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyTDIgNy4wMDAxVjE3TDEyIDIyTDIyIDE3VjcuMDAwMUwxMiAyWiIvPjwvc3ZnPg==" alt="Kyzlo v1.1"/>
+  <img src="https://img.shields.io/badge/Solana-Powered-9945FF?style=for-the-badge&logo=solana&logoColor=white" alt="Solana"/>
+  <img src="https://img.shields.io/badge/Jupiter-Aggregator-6B5CE7?style=for-the-badge" alt="Jupiter"/>
+  <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="MIT License"/>
+</p>
 
-A Solana DEX trading bot using Jupiter aggregator with trend-pullback scalping strategies.
+<div align="center">
+```
+██╗  ██╗██╗   ██╗███████╗██╗      ██████╗ 
+██║ ██╔╝╚██╗ ██╔╝╚══███╔╝██║     ██╔═══██╗
+█████╔╝  ╚████╔╝   ███╔╝ ██║     ██║   ██║
+██╔═██╗   ╚██╔╝   ███╔╝  ██║     ██║   ██║
+██║  ██╗   ██║   ███████╗███████╗╚██████╔╝
+╚═╝  ╚═╝   ╚═╝   ╚══════╝╚══════╝ ╚═════╝ 
+            ━━━ L A B S ━━━
+```
 
-## Overview
+**Autonomous DEX Trading Infrastructure for Solana**
 
-Kyzlo v1.1 implements a trading engine for Solana DEX markets through the Jupiter aggregator. It includes:
+[Getting Started](#-installation) · [Documentation](#-usage) · [Contributing](#-development)
 
-* **Kyzlo Bots**: Automated trading on Solana DEX markets via Jupiter
-* **Trend-Pullback Strategy**: Mean reversion scalping strategy
-* **CLI Interface**: Command-line based operation
-* **Risk Management**: Position sizing, slippage controls, max hold time
-* **Testing Suite**: Comprehensive unit and integration tests
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-## Project Structure
+</div>
+
+## 🌌 Overview
+
+Kyzlo v1.1 is institutional-grade trading infrastructure for Solana DEX markets, powered by Jupiter aggregator. Built for speed, reliability, and precision execution.
+
+| Feature | Description |
+|---------|-------------|
+| 🤖 **Kyzlo Bots** | Automated trading engines for Solana DEX |
+| 📈 **Trend-Pullback** | Mean reversion scalping strategies |
+| 🛡️ **Risk Management** | Position sizing, slippage controls, max hold time |
+| ⚡ **Jupiter Integration** | Best-in-class execution via aggregation |
+
+## 📁 Architecture
 ```
 src/
-  otq/
-    engines/         # Kyzlo Bot implementations
-    strategies/      # Trading strategies
-    adapters/        # Market data and broker adapters
-    domain/          # Domain models and types
-    risk/            # Risk management
-tests/               # Test suite
-config/              # Configuration files (jupiter.toml)
-scripts/             # Testing and utility scripts
+├── otq/
+│   ├── engines/         # 🤖 Kyzlo Bot implementations
+│   ├── strategies/      # 📊 Trading strategies
+│   ├── adapters/        # 🔌 Market data & broker adapters
+│   ├── domain/          # 🏗️  Domain models & types
+│   └── risk/            # 🛡️  Risk management
+tests/                   # ✅ Test suite
+config/                  # ⚙️  Configuration (jupiter.toml)
+scripts/                 # 🔧 Utilities
 ```
 
-## Requirements
+## 📋 Requirements
+```yaml
+Python:      3.11+
+Solana RPC:  Mainnet or Devnet endpoint
+Jupiter:     API access (optional)
+```
 
-* **Python**: 3.11+
-* **Solana RPC**: Mainnet or Devnet endpoint
-* **Jupiter API**: API access (optional)
-
-## Installation
+## 🚀 Installation
 ```bash
 # Create virtual environment
 python3.11 -m venv .venv
@@ -43,79 +67,72 @@ python3.11 -m venv .venv
 # Activate (Linux/Mac)
 source .venv/bin/activate
 
-# Install dependencies
+# Install Kyzlo
 pip install -e .
 ```
 
-## Configuration
+## ⚙️ Configuration
 
-Edit `config/jupiter.toml` to configure:
+Edit `config/jupiter.toml`:
+```toml
+# Trading pairs
+instruments = ["SOL", "JUP", "TRUMP"]
 
-* **Trading pairs**: `instruments = ["SOL", "JUP", "TRUMP"]`
-* **Risk limits**: Max position size, slippage, hold time
-* **Strategy parameters**: RSI thresholds, bar intervals
-* **RPC endpoint**: Solana mainnet/devnet URL
+# Risk limits, strategy params, RPC endpoint
+# See config file for full options
+```
 
-## Running Tests
+## 🧪 Testing
 ```bash
-# Run Kyzlo Bot engine tests
+# Kyzlo Bot engine tests
 python test_jupiter_v1_lite.py
 
-# Run strategy tests
+# Strategy tests
 pytest tests/test_jupiter_trend_pullback_scalper.py
 
-# Run all tests
+# Full suite
 pytest tests/
 ```
 
-## Usage
+## 💫 Usage
 
-### Strategy Testing
+**Strategy Testing**
 ```bash
-# Test strategy with synthetic data
 python scripts/smoke_jupiter_trend_pullback.py
 ```
 
-### Running Kyzlo Bots
+**Running Kyzlo Bots**
 ```bash
-# Entry point defined in pyproject.toml
 kyzlo-engine
-
-# Or run directly
-python -m otq.engines.jupiter_dex_engine_v1_lite
+# or: python -m otq.engines.jupiter_dex_engine_v1_lite
 ```
 
-## Key Features
+## ⚠️ Safety
 
-* **Jupiter Integration**: Uses Jupiter aggregator for best execution
-* **Solana Native**: Built on Solana SDK with proper keypair handling
-* **Configurable Strategy**: Trend-pullback scalper with adjustable parameters
-* **Risk Controls**: Position limits, slippage protection, time-based exits
-* **SQLite Persistence**: Local database for trade history
-* **CLI-Based**: Simple command-line interface for testing and execution
+> **This is trading software. Use at your own risk.**
 
-## Safety Notes
+- Start with small position sizes
+- Test thoroughly on devnet first  
+- Never commit private keys
+- Store keypairs securely outside repo
 
-⚠️ **This is trading software. Use at your own risk.**
-
-* Start with small position sizes
-* Test thoroughly on devnet first
-* Never commit private keys to git
-* Store keypairs securely outside the repository
-* Review all configuration before trading live
-
-## Development
+## 🔧 Development
 ```bash
-# Run linter
-ruff check src/
-
-# Format code
-ruff format src/
-
-# Type checking
-mypy src/
+ruff check src/    # Lint
+ruff format src/   # Format
+mypy src/          # Type check
 ```
 
-## License
+## 📄 License
 
-© Kyzlo Labs. See project license file.
+MIT License — see [LICENSE](LICENSE) for details.
+
+<div align="center">
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**Built with 💜 by [Kyzlo Labs](https://github.com/kyzlo-labs)**
+
+<sub>Solana • Jupiter • DeFi</sub>
+
+</div>
