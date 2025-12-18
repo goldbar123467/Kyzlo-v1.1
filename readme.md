@@ -1,23 +1,22 @@
-# Jupiter DEX Engine v1-lite
+# Kyzlo v1.1
 
 A Solana DEX trading bot using Jupiter aggregator with trend-pullback scalping strategies.
 
 ## Overview
 
-This project implements a trading engine for Solana DEX markets through the Jupiter aggregator. It includes:
+Kyzlo v1.1 implements a trading engine for Solana DEX markets through the Jupiter aggregator. It includes:
 
-- **Jupiter DEX Engine:** Automated trading on Solana DEX markets
-- **Trend-Pullback Strategy:** Mean reversion scalping strategy
-- **CLI Interface:** Command-line based operation
-- **Risk Management:** Position sizing, slippage controls, max hold time
-- **Testing Suite:** Comprehensive unit and integration tests
+* **Kyzlo Bots**: Automated trading on Solana DEX markets via Jupiter
+* **Trend-Pullback Strategy**: Mean reversion scalping strategy
+* **CLI Interface**: Command-line based operation
+* **Risk Management**: Position sizing, slippage controls, max hold time
+* **Testing Suite**: Comprehensive unit and integration tests
 
 ## Project Structure
-
 ```
 src/
   otq/
-    engines/         # Trading engine implementations
+    engines/         # Kyzlo Bot implementations
     strategies/      # Trading strategies
     adapters/        # Market data and broker adapters
     domain/          # Domain models and types
@@ -29,12 +28,11 @@ scripts/             # Testing and utility scripts
 
 ## Requirements
 
-- **Python:** 3.11+
-- **Solana RPC:** Mainnet or Devnet endpoint
-- **Jupiter API:** API access (optional)
+* **Python**: 3.11+
+* **Solana RPC**: Mainnet or Devnet endpoint
+* **Jupiter API**: API access (optional)
 
 ## Installation
-
 ```bash
 # Create virtual environment
 python3.11 -m venv .venv
@@ -53,15 +51,14 @@ pip install -e .
 
 Edit `config/jupiter.toml` to configure:
 
-- **Trading pairs:** `instruments = ["SOL", "JUP", "TRUMP"]`
-- **Risk limits:** Max position size, slippage, hold time
-- **Strategy parameters:** RSI thresholds, bar intervals
-- **RPC endpoint:** Solana mainnet/devnet URL
+* **Trading pairs**: `instruments = ["SOL", "JUP", "TRUMP"]`
+* **Risk limits**: Max position size, slippage, hold time
+* **Strategy parameters**: RSI thresholds, bar intervals
+* **RPC endpoint**: Solana mainnet/devnet URL
 
 ## Running Tests
-
 ```bash
-# Run Jupiter engine tests
+# Run Kyzlo Bot engine tests
 python test_jupiter_v1_lite.py
 
 # Run strategy tests
@@ -74,17 +71,15 @@ pytest tests/
 ## Usage
 
 ### Strategy Testing
-
 ```bash
 # Test strategy with synthetic data
 python scripts/smoke_jupiter_trend_pullback.py
 ```
 
-### Running the Engine
-
+### Running Kyzlo Bots
 ```bash
 # Entry point defined in pyproject.toml
-jupyter-engine
+kyzlo-engine
 
 # Or run directly
 python -m otq.engines.jupiter_dex_engine_v1_lite
@@ -92,25 +87,24 @@ python -m otq.engines.jupiter_dex_engine_v1_lite
 
 ## Key Features
 
-- **Jupiter Integration:** Uses Jupiter aggregator for best execution
-- **Solana Native:** Built on Solana SDK with proper keypair handling
-- **Configurable Strategy:** Trend-pullback scalper with adjustable parameters
-- **Risk Controls:** Position limits, slippage protection, time-based exits
-- **SQLite Persistence:** Local database for trade history
-- **CLI-Based:** Simple command-line interface for testing and execution
+* **Jupiter Integration**: Uses Jupiter aggregator for best execution
+* **Solana Native**: Built on Solana SDK with proper keypair handling
+* **Configurable Strategy**: Trend-pullback scalper with adjustable parameters
+* **Risk Controls**: Position limits, slippage protection, time-based exits
+* **SQLite Persistence**: Local database for trade history
+* **CLI-Based**: Simple command-line interface for testing and execution
 
 ## Safety Notes
 
 ⚠️ **This is trading software. Use at your own risk.**
 
-- Start with small position sizes
-- Test thoroughly on devnet first
-- Never commit private keys to git
-- Store keypairs securely outside the repository
-- Review all configuration before trading live
+* Start with small position sizes
+* Test thoroughly on devnet first
+* Never commit private keys to git
+* Store keypairs securely outside the repository
+* Review all configuration before trading live
 
 ## Development
-
 ```bash
 # Run linter
 ruff check src/
@@ -124,4 +118,4 @@ mypy src/
 
 ## License
 
-See project license file.
+© Kyzlo Labs. See project license file.
