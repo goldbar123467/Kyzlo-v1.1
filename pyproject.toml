@@ -3,17 +3,16 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ot-tech-quant"
-version = "0.2.0"
-description = "Kyzlo Labs multi-language, GPU-accelerated quant research platform with live trading"
+name = "jupiter-dex-engine-v1-lite"
+version = "1.0.0"
+description = "Jupiter DEX Engine v1-lite - Solana DEX-only trading bot with mean reversion strategies"
 authors = [
     { name = "Clark", email = "you@example.com" }
 ]
-readme = "README.md"
+readme = "readme.md"
 requires-python = ">=3.11"
 dependencies = [
     # CLI & Utils
-    "typer[all]>=0.9.0",
     "python-dotenv>=1.0.0",
     "rich>=13.0.0",
     "loguru>=0.7.0",
@@ -23,21 +22,15 @@ dependencies = [
     # Data Science
     "pandas>=2.0.0",
     "numpy>=1.24.0",
-    "pandas-ta>=0.3.14b",
-    "scipy>=1.10.0",
     
-    # Trading & Market Data
-    "alpaca-py>=0.21.0",
-    "polygon>=1.0.0",
-    "websocket-client>=1.6.0",
-    "websockets>=12.0",
+    # Solana & Jupiter
+    "solana>=0.30.0",
+    "solders>=0.18.0",
+    "base58>=2.1.0",
     
     # HTTP
     "requests>=2.31.0",
     "httpx>=0.25.0",
-    
-    # Visualization
-    "matplotlib>=3.7.0",
     
     # Database
     "sqlalchemy>=2.0.0",
@@ -46,36 +39,17 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0.0",
-    "pytest-cov>=4.0.0",
     "pytest-asyncio>=0.21.0",
-    "black>=23.0.0",
     "ruff>=0.1.0",
-    "mypy>=1.0.0",
-]
-
-gpu = [
-    "torch>=2.0.0",
-    "torchvision>=0.15.0",
-    "torchaudio>=2.0.0",
 ]
 
 [project.scripts]
-otq = "otq.main:main"
+jupiter-engine = "otq.engines.jupiter_dex_engine_v1_lite:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-
-[tool.black]
-line-length = 100
-target-version = ['py311']
 
 [tool.ruff]
 line-length = 100
 select = ["E", "F", "W", "I"]
 ignore = ["E501"]
-
-[tool.mypy]
-python_version = "3.11"
-warn_return_any = true
-warn_unused_configs = true
-ignore_missing_imports = true

@@ -10,24 +10,18 @@ from ...domain.models.perp_metrics import PerpMetrics
 
 class HybridMarketDataService:
     """
-    CoinGecko-only market data service (Polygon disabled for crypto).
-
-    For intraday equities, optionally plug Alpha Vantage (pull-based) when provided;
-    otherwise callers should use venue-specific adapters (e.g., Polygon SIP) directly.
+    CoinGecko-only market data service for Jupiter DEX v1-lite.
+    
+    Single source of truth: CoinGecko for all price data.
     """
 
     def __init__(
         self,
-        polygon_adapter: Optional[MarketDataPort],
         coingecko_adapter: MarketDataPort,
-        alpha_vantage_adapter: Optional[MarketDataPort] = None,
         enabled: bool = True,
         cache_ttl_seconds: int = 0,
     ):
-        # polygon_adapter kept for compatibility but unused to enforce the "no Polygon for crypto" rule
-        self.polygon = polygon_adapter
         self.coingecko = coingecko_adapter
-        self.alpha_vantage = alpha_vantage_adapter
         self.enabled = enabled
         self._cache_ttl = timedelta(seconds=cache_ttl_seconds)
         self._tick_cache: Dict[str, Tuple[datetime, Tick]] = {}
@@ -40,13 +34,11 @@ class HybridMarketDataService:
             if now - ts < self._cache_ttl:
                 return tick
 
-        # Hard rule: never call Polygon for crypto ticks.
         tick = await self.coingecko.get_tick(symbol)
         self._tick_cache[symbol] = (now, tick)
         return tick
 
     async def get_ohlcv(self, symbol: str, timeframe: str, limit: int = 200):
-        # Hard rule: only CoinGecko for OHLCV.
         return await self.coingecko.get_ohlcv(symbol, timeframe, limit)
 
     async def get_perp_metrics(self, symbol: str) -> Optional[PerpMetrics]:

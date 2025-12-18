@@ -11,8 +11,7 @@ config import.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, List
-import os
+from typing import Dict, List, Optional
 
 
 @dataclass(frozen=True)
@@ -39,20 +38,26 @@ TOKEN_MAP: Dict[str, SolanaToken] = {
 }
 
 
-def _load_extra_tokens_from_env() -> None:
-    """Extend TOKEN_MAP from env.
+def load_extra_tokens(extra_tokens_str: Optional[str] = None) -> Dict[str, SolanaToken]:
+    """Load extra tokens from config string (called at boot only).
 
     Format (comma-separated):
-        OTQ_SOLANA_EXTRA_TOKENS="TRUMP=<mint>:<decimals>,FOO=<mint>:<decimals>"
+        "TRUMP=<mint>:<decimals>,FOO=<mint>:<decimals>"
 
+    Returns: Updated TOKEN_MAP with extra tokens merged in.
+    
     Notes:
-    - This does not remove built-in tokens.
-    - If a symbol already exists, it is overwritten (explicit override).
+    - Does not modify built-in tokens unless explicitly overridden.
+    - Called once during load_config_or_exit(), not at runtime.
     """
+    token_map = TOKEN_MAP.copy()
+    
+    if not extra_tokens_str:
+        return token_map
 
-    raw = (os.getenv("OTQ_SOLANA_EXTRA_TOKENS") or "").strip()
+    raw = extra_tokens_str.strip()
     if not raw:
-        return
+        return token_map
 
     for entry in [p.strip() for p in raw.split(",") if p.strip()]:
         if "=" not in entry:
@@ -73,11 +78,9 @@ def _load_extra_tokens_from_env() -> None:
             decimals = int(dec_str)
         except Exception:
             continue
-        TOKEN_MAP[sym] = SolanaToken(symbol=sym, mint=mint, decimals=decimals)
-
-
-# Allow runtime extensions like TRUMP without code edits.
-_load_extra_tokens_from_env()
+        token_map[sym] = SolanaToken(symbol=sym, mint=mint, decimals=decimals)
+    
+    return token_map
 
 # Base/quote pairs we trade (always quote USDC for this engine)
 PAIR_UNIVERSE: List[str] = [
@@ -115,5 +118,6 @@ __all__ = [
     "PAIR_UNIVERSE",
     "get_token",
     "list_pairs",
+    "load_extra_tokens",
 ]
 
