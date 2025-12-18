@@ -8,7 +8,7 @@ This project implements a trading engine for Solana DEX markets through the Jupi
 
 - **Jupiter DEX Engine:** Automated trading on Solana DEX markets
 - **Trend-Pullback Strategy:** Mean reversion scalping strategy
-- **Next.js Dashboard:** Web-based monitoring dashboard (optional)
+- **CLI Interface:** Command-line based operation
 - **Risk Management:** Position sizing, slippage controls, max hold time
 - **Testing Suite:** Comprehensive unit and integration tests
 
@@ -22,21 +22,18 @@ src/
     adapters/        # Market data and broker adapters
     domain/          # Domain models and types
     risk/            # Risk management
-dashboard/           # Next.js web dashboard
 tests/               # Test suite
 config/              # Configuration files (jupiter.toml)
+scripts/             # Testing and utility scripts
 ```
 
 ## Requirements
 
 - **Python:** 3.11+
-- **Node.js:** 18+ (for dashboard)
 - **Solana RPC:** Mainnet or Devnet endpoint
 - **Jupiter API:** API access (optional)
 
 ## Installation
-
-### Python Backend
 
 ```bash
 # Create virtual environment
@@ -50,14 +47,6 @@ source .venv/bin/activate
 
 # Install dependencies
 pip install -e .
-```
-
-### Dashboard (Optional)
-
-```bash
-cd dashboard
-npm install
-npm run dev
 ```
 
 ## Configuration
@@ -108,7 +97,7 @@ python -m otq.engines.jupiter_dex_engine_v1_lite
 - **Configurable Strategy:** Trend-pullback scalper with adjustable parameters
 - **Risk Controls:** Position limits, slippage protection, time-based exits
 - **SQLite Persistence:** Local database for trade history
-- **Dashboard:** Optional web UI for monitoring (Next.js + React)
+- **CLI-Based:** Simple command-line interface for testing and execution
 
 ## Safety Notes
 
