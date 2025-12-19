@@ -44,7 +44,7 @@ dev = [
 ]
 
 [project.scripts]
-jupiter-engine = "otq.engines.jupiter_dex_engine_v1_lite:main"
+jupiter-engine = "run_engine:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
